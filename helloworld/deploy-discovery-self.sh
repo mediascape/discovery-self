@@ -10,7 +10,7 @@ cd /tmp/
 Color_Off='\033[0m'       # Text Reset
 
 # Regular Colors
-Black='\033[0;30m'        # Black
+Black='\033[0;30m'        # Blackls 
 Red='\033[0;31m'          # Red
 Green='\033[0;32m'        # Green
 Yellow='\033[0;33m'       # Yellow
@@ -37,7 +37,8 @@ else
 	git pull
 fi
 
-sudo cp $helloworld /var/www/ -r
+sudo cp $helloworld /var/www/discovery-self -r
+sudo mkdir /var/www/discovery-self/js/mediascape/lib
 sudo cp $src/* /var/www/discovery-self/js/mediascape -r
 sudo cp $lib/* /var/www/discovery-self/js/mediascape/lib -r
 
