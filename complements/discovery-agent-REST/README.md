@@ -1,4 +1,4 @@
-#DiscoveryAgentREST
+#Discovery Agent REST
 
 Basic Android DiscoveryAgentREST agent for getting UPnP services, detect bluetooth devices , get device capabilities and create android notifications.
 
@@ -11,7 +11,7 @@ Basic Android DiscoveryAgentREST agent for getting UPnP services, detect bluetoo
  * Creation of android notifications on demand.
 
 ## Navigation
-[Goals][] | [Requirements][] | [Instalation][] | [Simple Routing][] | [Example][]| [Lisence][]
+[Goals][] | [Requirements][] | [Instalation][] | [Run][] | [Examples][]
 
 ### Goals
 [Top][]
@@ -48,8 +48,12 @@ Instalation in Android:
 		 - Step 3: Turn off USB storage and disconnect it from PC.
 		 - Step 4: Open FileManager app and click on the copied .apk file.It will ask you whether to install this app or not. Click Yes or OK.
 
-### Simple Routing
+### Run
 [Top][]
+
+The native agents responds to HTTP requests as explained in the Discovery API description:
+
+https://github.com/mediascape/discovery-self/tree/master/API/
 
 The routing URI is divided in two part, routed part and remaining part.
 
@@ -58,7 +62,7 @@ The routing URI is divided in two part, routed part and remaining part.
     http://localhost:8182/discoveryagent/upnp/actions?callback=actionsUpnp&device=2&service=RenderingControl
 ```
 
-The routed part is allwais the same:
+The routed part is always the same:
 
 ```php
     http://localhost:8182/
@@ -78,68 +82,60 @@ the device screen size agent presence.
 We have made an application that consume REST content using AJAX's GET and POST methods. In the following example we can see the result obtained from the different requests.
 
 ```html
-<html>
-<body>
-<div>
-	<h1>GET request</h1>
+GET request
 
-	<div>http://localhost:8182/discoveryagent/upnp/devices</div>
+ * http://localhost:8182/discoveryagent/upnp/devices
 
-	<div>{"devices":[{"deviceName":"TP-LINK Windows Media Connect Compatible (TL-WR1043ND) 001"},{"deviceName":"Rockchip Media Renderer 1.0"},{"deviceName":"fbox FboxTV MediaRenderer 1"},{"deviceName":"fbox FboxTV MediaRenderer 1"},{"deviceName":"TP-LINK TL-WR1043ND 1.0"},{"deviceName":"rockchip GNaP v1"},{"deviceName":"rockchip fbox v1"}]}</div>
+ {"devices":[{"deviceName":"TP-LINK Windows Media Connect Compatible (TL-WR1043ND) 001"},{"deviceName":"Rockchip Media Renderer 1.0"},{"deviceName":"fbox FboxTV MediaRenderer 1"},{"deviceName":"fbox FboxTV MediaRenderer 1"},{"deviceName":"TP-LINK TL-WR1043ND 1.0"},{"deviceName":"rockchip GNaP v1"},{"deviceName":"rockchip fbox v1"}]}
 
-	<div>http://localhost:8182/discoveryagent/upnp/devicedetails?device=4</div>
+ * http://localhost:8182/discoveryagent/upnp/devicedetails?device=4
 
-	<div>{"details":[{"number":"1","FriendlyName":"Fbox MediaRenderer : 192.168.1.107","description":"MediaRenderer on Android","manufacturer":"Fbox MediaRenderer : 192.168.1.107","name":"Fbox MediaRenderer : 192.168.1.107"}],"device":"fbox FboxTV MediaRenderer 1"}</div>
+ {"details":[{"number":"1","FriendlyName":"Fbox MediaRenderer : 192.168.1.107","description":"MediaRenderer on Android","manufacturer":"Fbox MediaRenderer : 192.168.1.107","name":"Fbox MediaRenderer : 192.168.1.107"}],"device":"fbox FboxTV MediaRenderer 1"}
 
-	<div>http://localhost:8182/discoveryagent/upnp/services?device=4</div>
+ * http://localhost:8182/discoveryagent/upnp/services?device=4
 
-	<div>{"services":[{"type":"AVTransport","serviceId":"urn:upnp-org:serviceId:AVTransport","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:AVTransport"},{"type":"RenderingControl","serviceId":"urn:upnp-org:serviceId:RenderingControl","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:RenderingControl"},{"type":"ConnectionManager","serviceId":"urn:upnp-org:serviceId:ConnectionManager","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:ConnectionManager"}]}</div>
+ {"services":[{"type":"AVTransport","serviceId":"urn:upnp-org:serviceId:AVTransport","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:AVTransport"},{"type":"RenderingControl","serviceId":"urn:upnp-org:serviceId:RenderingControl","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:RenderingControl"},{"type":"ConnectionManager","serviceId":"urn:upnp-org:serviceId:ConnectionManager","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:ConnectionManager"}]}
 
-	<div>http://localhost:8182/discoveryagent/upnp/actions?device=4&service=RenderingControl</div>
+ * http://localhost:8182/discoveryagent/upnp/actions?device=4&service=RenderingControl
 
-	<div>{"service":"RenderingControl","actions":[{"actionName":"ListPresets"},{"actionName":"GetLoudness"},{"actionName":"SetMute"},{"actionName":"SetVolume"},{"actionName":"GetVolume"},{"actionName":"SetLoudness"},{"actionName":"GetVolumeDB"},{"actionName":"SetVolumeDB"},{"actionName":"GetVolumeDBRange"},{"actionName":"GetMute"},{"actionName":"SelectPreset"}]}</div>
+ {"service":"RenderingControl","actions":[{"actionName":"ListPresets"},{"actionName":"GetLoudness"},{"actionName":"SetMute"},{"actionName":"SetVolume"},{"actionName":"GetVolume"},{"actionName":"SetLoudness"},{"actionName":"GetVolumeDB"},{"actionName":"SetVolumeDB"},{"actionName":"GetVolumeDBRange"},{"actionName":"GetMute"},{"actionName":"SelectPreset"}]}
 
-	<div>http://localhost:8182/discoveryagent/upnp/parameters?device=4&service=RenderingControl&action=SetVolume</div>
+ * http://localhost:8182/discoveryagent/upnp/parameters?device=4&service=RenderingControl&action=SetVolume
 
-	<div>{"action":"SetVolume","parameters":[{"type":"(UnsignedIntegerFourBytesDatatype)","argument":"InstanceID"},{"type":"(StringDatatype)","argument":"Channel"},{"type":"(UnsignedIntegerTwoBytesDatatype)","argument":"DesiredVolume"}]}</div>
+ {"action":"SetVolume","parameters":[{"type":"(UnsignedIntegerFourBytesDatatype)","argument":"InstanceID"},{"type":"(StringDatatype)","argument":"Channel"},{"type":"(UnsignedIntegerTwoBytesDatatype)","argument":"DesiredVolume"}]}
 
-	<h1>POST request<h1>
+POST request
 
-	<div>http://localhost:8182/discoveryagent/upnp/devices</div>
+ * http://localhost:8182/discoveryagent/upnp/devices
 	
-	<div>{"devices":[{"deviceName":"TP-LINK Windows Media Connect Compatible (TL-WR1043ND) 001"},{"deviceName":"Rockchip Media Renderer 1.0"},{"deviceName":"fbox FboxTV MediaRenderer 1"},{"deviceName":"fbox FboxTV MediaRenderer 1"},{"deviceName":"TP-LINK TL-WR1043ND 1.0"},{"deviceName":"rockchip GNaP v1"},{"deviceName":"rockchip fbox v1"}]}</div>
+ {"devices":[{"deviceName":"TP-LINK Windows Media Connect Compatible (TL-WR1043ND) 001"},{"deviceName":"Rockchip Media Renderer 1.0"},{"deviceName":"fbox FboxTV MediaRenderer 1"},{"deviceName":"fbox FboxTV MediaRenderer 1"},{"deviceName":"TP-LINK TL-WR1043ND 1.0"},{"deviceName":"rockchip GNaP v1"},{"deviceName":"rockchip fbox v1"}]}
 
-	<div>http://localhost:8182/discoveryagent/upnp/devicedetails</div>
+ * http://localhost:8182/discoveryagent/upnp/devicedetails
 
-	<div>{"details":[{"number":"1","FriendlyName":"Fbox MediaRenderer : 192.168.1.107","description":"MediaRenderer on Android","manufacturer":"Fbox MediaRenderer : 192.168.1.107","name":"Fbox MediaRenderer : 192.168.1.107"}],"device":"fbox FboxTV MediaRenderer 1"}</div>
+ {"details":[{"number":"1","FriendlyName":"Fbox MediaRenderer : 192.168.1.107","description":"MediaRenderer on Android","manufacturer":"Fbox MediaRenderer : 192.168.1.107","name":"Fbox MediaRenderer : 192.168.1.107"}],"device":"fbox FboxTV MediaRenderer 1"}
 
-	<div>http://localhost:8182/discoveryagent/upnp/services</div>
+ * http://localhost:8182/discoveryagent/upnp/services
 
-	<div>{"device":"fbox FboxTV MediaRenderer 1","services":[{"type":"AVTransport","serviceId":"urn:upnp-org:serviceId:AVTransport","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:AVTransport"},{"type":"RenderingControl","serviceId":"urn:upnp-org:serviceId:RenderingControl","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:RenderingControl"},{"type":"ConnectionManager","serviceId":"urn:upnp-org:serviceId:ConnectionManager","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:ConnectionManager"}]}</div>
+ {"device":"fbox FboxTV MediaRenderer 1","services":[{"type":"AVTransport","serviceId":"urn:upnp-org:serviceId:AVTransport","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:AVTransport"},{"type":"RenderingControl","serviceId":"urn:upnp-org:serviceId:RenderingControl","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:RenderingControl"},{"type":"ConnectionManager","serviceId":"urn:upnp-org:serviceId:ConnectionManager","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:ConnectionManager"}]}
 
-	<div>http://localhost:8182/discoveryagent/upnp/actions</div>
+ * http://localhost:8182/discoveryagent/upnp/actions
 
-	<div>{"service":"RenderingControl","actions":[{"actionName":"ListPresets"},{"actionName":"GetLoudness"},{"actionName":"SetMute"},{"actionName":"SetVolume"},{"actionName":"GetVolume"},{"actionName":"SetLoudness"},{"actionName":"GetVolumeDB"},{"actionName":"SetVolumeDB"},{"actionName":"GetVolumeDBRange"},{"actionName":"GetMute"},{"actionName":"SelectPreset"}]}</div>
+ {"service":"RenderingControl","actions":[{"actionName":"ListPresets"},{"actionName":"GetLoudness"},{"actionName":"SetMute"},{"actionName":"SetVolume"},{"actionName":"GetVolume"},{"actionName":"SetLoudness"},{"actionName":"GetVolumeDB"},{"actionName":"SetVolumeDB"},{"actionName":"GetVolumeDBRange"},{"actionName":"GetMute"},{"actionName":"SelectPreset"}]}
 
-	<div>http://localhost:8182/discoveryagent/upnp/parameters</div>
+ * http://localhost:8182/discoveryagent/upnp/parameters
 
-	<div>{"action":"RenderingControl","parameters":[{"type":"(UnsignedIntegerFourBytesDatatype)","argument":"InstanceID"},{"type":"(StringDatatype)","argument":"Channel"},{"type":"(UnsignedIntegerTwoBytesDatatype)","argumen:"DesiredVolume"}]}</div>
+ {"action":"RenderingControl","parameters":[{"type":"(UnsignedIntegerFourBytesDatatype)","argument":"InstanceID"},{"type":"(StringDatatype)","argument":"Channel"},{"type":"(UnsignedIntegerTwoBytesDatatype)","argumen:"DesiredVolume"}]}
 	
 	
-	<h1>Notification GET request</h1>
-	
-	<div>http://localhost:8182/discoveryagent/notification?url=http://bit.ly/1HvO150</div>
-</div>
-</body>
-</html>
+Notification GET request
+
+ * http://localhost:8182/discoveryagent/notification?url=http://bit.ly/1HvO150
 ```
-### Lisence
-[Top][]
 
 [Top]: #navigation
 [Goals]: #goals
 [Requirements]: #requirements
 [Instalation]: #instalation
-[Simple Routing]: #simple-routing
-[Example]: #example
-[Lisence]: #lisence
+[Run]: #run
+[Examples]: #examples
+
