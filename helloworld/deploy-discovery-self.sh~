@@ -24,9 +24,12 @@ FILE=./discovery-self
 
 if [ ! -d $FILE  ];
 then
+#	git clone https://$user:$password@github.com/mediascape/discovery-self.git
 	git clone https://github.com/mediascape/discovery-self.git
 	cd ./discovery-self
 	git config core.sparsecheckout true
+	#echo API/ > .git/info/sparse-checkout
+	#echo Demos/ > .git/info/sparse-checkout
 	git read-tree -m -u HEAD
 else 
 	echo "${Blue}Checking for updates...${Color_Off}"
@@ -44,7 +47,6 @@ else
 	sudo cp $src/* /var/www/discovery-self/js/mediascape -r
 	sudo cp $lib/* /var/www/discovery-self/js/mediascape/lib -r
 fi
-
 ##
 #In case that we prefer the use of node
 #Install node libraries and start node execution
