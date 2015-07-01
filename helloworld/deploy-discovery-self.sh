@@ -38,7 +38,6 @@ else
 fi
 
 sudo cp $helloworld /var/www/discovery-self -r
-sudo mkdir /var/www/discovery-self/js/mediascape/lib
 sudo cp $src/* /var/www/discovery-self/js/mediascape -r
 sudo cp $lib/* /var/www/discovery-self/js/mediascape/lib -r
 
