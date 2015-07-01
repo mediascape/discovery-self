@@ -1,6 +1,6 @@
 #Discovery-Self
 
-In this folder you will find the Discovery library developed for MediaScape project.
+In this folder you will find the Discovery library developed for [MediaScape project](http://mediascapeproject.eu/).
 
 ## Navigation
 [Structure][] | [Authors][] | [License][]
