@@ -1,6 +1,10 @@
-# WP3 Discovery API #
+# Discovery-self API
+
+## Navigation
+[Overview][] | [Architecture][] | [API][] | [JS Discovery API for Capabilities Discovery Agents][] | [JS Discovery API for Networking Discovery Agents][]| [Examples][]
 
 ## Overview
+[Top][]
 
 This library build awareness about the device features and the available devices ready to be connected for each application instance. To achieve it, this *Discovery* library introspects the features of the device and detect the reachable devices through the possible network interfaces and communication protocols.
 
@@ -15,6 +19,7 @@ The solutions include two major possibilities:
 ---
 
 ## Architecture
+[Top][]
 
 A major concern is the heterogeneity of the devices where agents must perform their activity. However, from the point of view of the developer, there must be a common interface to these agents, independent of the underlying functionality, technology or pipeline.
 
@@ -24,7 +29,7 @@ The MediaScape JavaScript Discovery API hides the complexity of the Discover Age
 
 **_The Discovery API interfaces underlying Agents, native or web-browser based. In order to create a uniform JavaScript interface, it has been defined a common REST web services for local native agents. The results are formatted as JSON. This architecture is depicted in the next figure._**
 
-![alt text](https://github.com/mediascape/WP3/blob/master/API/WP3mediascape/Discovery/DiscoveryAgentAPI.png "Discovery Architecture based on Discovery Agents")
+![alt text](https://github.com/mediascape/discovery-self/blob/master/API/DiscoveryAgentAPI.png "Discovery Architecture based on Discovery Agents")
 
 The different agents for different **_target_** technologies will be operable through a pattern of URLs as follows:
  ```
@@ -55,6 +60,7 @@ This way different native implemented discovery agents have a standard interface
 ---
 
 ## API
+[Top][]
 
 In order to preserve the smoothness of the Web application, it is mandatory to perform asynchronous requests to the discovery agents to avoid blocking the application runtime waiting for the discovery responses. Promises overcomes these issues by providing uniform patterns for the callbacks of asynchronous operations.
 
@@ -86,6 +92,7 @@ This **_general function_** returns all the discovered information about the dev
 ---
 
 ### JS Discovery API for Capabilities Discovery Agents
+[Top][]
 
 Bringing the need of getting awareness of the features of a device, this Discovery library collects the capabilities supplied by each appliance and create a common inventory where the available capabilities for each device are published. Thus, the list of available capabilities is stored through the *MediaScape Shared Context API* to get persistence and share the results.
 
@@ -119,6 +126,7 @@ This function returns additional information about the device, service or asset 
 ---
 
 #### Discovery of Device Capabilities
+[Top][]
 
 This section collects the **_current_** available information available through the *Discovery* API.
 
@@ -189,6 +197,8 @@ This function provide information about user’s device connection type. This in
 ---
 
 ### JS Discovery API for Networking Discovery Agents
+[Top][]
+
 Bringing the need of getting awareness of the reachable assets through a device by means of its network interface or supported communication protocols, this Discovery library detect the devices, services and media sources reachable by each appliance and create a common inventory where the available assets for each device are published. Thus, the list of available assets is stored through the *MediaScape Shared Context API* to get persistence and share the results.
 
 Because most of the Discovery protocols for networks exploit Multicast and UDP connections not available yet through the Web Browser, it is necessary to employ Native Agents to overcome interoperable connectivity.
@@ -225,6 +235,7 @@ This function has been created just for namedwebsocket, it creates the connectio
 ---
 
 #### Discovery of Device Networking
+[Top][]
 
 At this moment to check the valid proposed architecture for native implemented agents a basic Android RESTful agent for getting UPnP and Bluetooth services has been developed:
 
@@ -270,13 +281,11 @@ However, in the second example we can see the discovery of device capabilities, 
 ### Code Example
 
 You can find the implementation of an example for the use of the code in the web:
-```html
-	https://github.com/mediascape/WP3/tree/master/Tests/helloworld/WP3Demo
-```
+
+https://github.com/mediascape/discovery-self/tree/master/helloworld
 
 ### Use Example
 
 You can view this example working in the URL:
-```html
-	http://150.241.250.4:7443/WP3Demo
-```
+
+http://150.241.250.4:7443/WP3Demo
