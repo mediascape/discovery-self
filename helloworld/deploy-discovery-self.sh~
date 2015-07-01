@@ -38,8 +38,8 @@ else
 fi
 
 sudo cp $helloworld /var/www/ -r
-sudo cp $src/* /var/www/discovery-self/js/mediascape -r
-sudo cp $lib/* /var/www/discovery-self/js/mediascape/lib -r
+cp $src/* /var/www/discovery-self/js/mediascape -r
+cp $lib/* /var/www/discovery-self/js/mediascape/lib -r
 
 ##
 #In case that we prefer the use of node
