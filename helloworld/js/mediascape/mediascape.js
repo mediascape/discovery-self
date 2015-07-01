@@ -30,7 +30,7 @@
 	});
 
 	// Start the main app logic.
-	define( "mediascape", [ "jquery", "mediascape/Discovery/discovery","mediascape/Association/association" ], function($, Modules){
+	define( "mediascape", [ "jquery", "mediascape/Discovery/discovery" ], function($, Modules){
 		//jQuery, modules and the discovery/modules module are all
 		//loaded and can be used here now.
 
