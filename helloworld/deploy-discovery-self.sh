@@ -1,7 +1,8 @@
 #!/bin/bash
 
 src=API/mediascape/Discovery
-lib=API/mediascape/lib
+discovery_lib=API/mediascape/lib
+mediascape_lib=API/lib
 helloworld=helloworld
 
 cd /tmp/
@@ -38,11 +39,13 @@ if [ -d /var/www/html ];
 then
 	sudo cp $helloworld /var/www/html/discovery-self -r
 	sudo cp $src/* /var/www/html/discovery-self/js/mediascape -r
-	sudo cp $lib/* /var/www/html/discovery-self/js/mediascape/lib -r
+	sudo cp $mediascape_lib/* /var/www/html/discovery-self/js/lib -r
+	sudo cp $discovery_lib/* /var/www/html/discovery-self/js/mediascape/lib -r
 else
 	sudo cp $helloworld /var/www/discovery-self -r
 	sudo cp $src/* /var/www/discovery-self/js/mediascape -r
-	sudo cp $lib/* /var/www/discovery-self/js/mediascape/lib -r
+	sudo cp $mediascape_lib/* /var/www/discovery-self/js/lib -r
+	sudo cp $discovery_lib/* /var/www/discovery-self/js/mediascape/lib -r
 fi
 
 ##
