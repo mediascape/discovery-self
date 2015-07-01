@@ -1,7 +1,7 @@
 # Discovery-self API
 
 ## Navigation
-[Overview][] | [Architecture][] | [API][] | [JS Discovery API for Capabilities Discovery Agents][] | [JS Discovery API for Networking Discovery Agents][]| [Examples][]
+[Overview][] | [Architecture][] | [API][] | [JS Discovery API for Capabilities Discovery Agents][] | [JS Discovery API for Networking Discovery Agents][] | [Examples][]
 
 ## Overview
 [Top][]
@@ -269,7 +269,7 @@ However, in the second example we can see the discovery of device capabilities, 
 ```html
 	mediascape.discovery.getParameters("upnp",4, "RenderingControl","SetVolume").then(function(data) {console.log('Parameters Ok'); console.log(data);}, function(data){console.log('Parameters Error');});
 			
-	mediascape.discovery.IsPresent("bluetooth").then(function(data){console.log('Bluetooth Presence Ok');console.log(data);}, function(data){console.log("Bluetooth Presence Error");});
+	mediascape.discovery.isPresent("bluetooth").then(function(data){console.log('Bluetooth Presence Ok');console.log(data);}, function(data){console.log("Bluetooth Presence Error");});
 
 	mediascape.discovery.getDevices("namedwebsockets").then(function(data){console.log('NamedWebSockets Presence Ok');console.log(data);}, function(data){console.log("Devices Error");});
 ```
@@ -289,3 +289,12 @@ https://github.com/mediascape/discovery-self/tree/master/helloworld
 You can view this example working in the URL:
 
 http://150.241.250.4:7443/WP3Demo
+
+
+[Top]: #navigation
+[Overview]: #overview
+[Architecture]: #architecture
+[API]: #api
+[JS Discovery API for Capabilities Discovery Agents]: #js-discovery-api-for-capabilities-discovery-agents
+[JS Discovery API for Networking Discovery Agents]: #js-discovery-api-for-networking-discovery-agents
+[Examples]: #examples
