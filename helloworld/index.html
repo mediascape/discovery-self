@@ -1,0 +1,178 @@
+<html>
+<head>
+	<link rel="shortcut icon" href="img/Mediascape.png">
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<script data-main="js/mediascape/mediascape" src="js/mediascape/lib/require.js"></script>
+	<script>
+		document.addEventListener('mediascape-ready',function(e){
+			//function to get agent presence
+			mediascape.discovery.isPresent().then(function(data){ console.log('Agent Presence'); console.log(data);jQuery('#javascript .capabilitiesPresence').append('<br><div>Presence:</div><br><div>'+JSON.stringify(data)+'</div>');return data;},function(data){ console.log('Presence'); console.log(data);jQuery('#javascript .capabilitiesPresence').append('<br><div>Presence:</div><br><div>'+JSON.stringify(data)+'</div>');return data;});
+			//function to get all capabilities in just one call
+			mediascape.discovery.getExtra().then(function(data1){ console.log('Agent Capabilities'); console.log(data1);jQuery('#javascript .capabilitiesExtra').append('<br><div>Capabilities:</div><br><div>'+JSON.stringify(data1)+'</div>');return data1;},function(data1){ console.log('Capabilities'); console.log(data1);jQuery('#javascript .capabilitiesExtra').append('<br><div>Capabilities:</div><br><div>'+JSON.stringify(data1)+'</div>');return data1;});
+			
+			//Device and services discovery
+			//=============================
+			
+			//function to get bluetooth agent presence
+			mediascape.discovery.isPresent("bluetooth").then(function(data2){ console.log('Bluetooth Presence'); console.log(data2);jQuery('#javascript .bluetoothPresence').append('<br><div>Bluetooth Presence:</div><br><div>'+JSON.stringify(data2)+'</div>');return data2;},function(data2){ console.log('Bluetooth Presence'); console.log(data2);jQuery('#javascript .bluetoothPresence').append('<br><div>Bluetooth Presence:</div><br><div>'+JSON.stringify(data2)+'</div>');return data2;}).then(function(data2){console.log(data2);});
+			//function to get UPnP agent presence
+			mediascape.discovery.isPresent("upnp").then(function(data3){ console.log('Upnp Presence'); console.log(data3);jQuery('#javascript .upnpPresence').append('<br><div>Upnp Presence:</div><br><div>'+JSON.stringify(data3)+'</div>');return data3;},function(data3){ console.log('Upnp Presence'); console.log(data3);jQuery('#javascript .upnpPresence').append('<br><div>Upnp Presence:</div><br><div>'+JSON.stringify(data3)+'</div>');return data3;}).then(function(data3){console.log(data3);});
+			//function to get the devices connected by Bluetooth
+			mediascape.discovery.getDevices("bluetooth").then(function(data4){ console.log('Bluetooth Devices'); console.log(data4);jQuery('#javascript .bluetoothDevices').append('<br><div>Bluetooth Devices:</div><br><div>'+JSON.stringify(data4)+'</div>');return data4;},function(data4){ console.log('Bluetooth Devices'); console.log(data4);jQuery('#javascript .bluetoothDevices').append('<br><div>Bluetooth Devices:</div><br><div>'+JSON.stringify(data4)+'</div>');return data4;}).then(function(data4){console.log(data4);});
+			//function to get the devices connected by UPnP
+			mediascape.discovery.getDevices("upnp").then(function(data5){ console.log('Upnp Devices'); console.log(data5);jQuery('#javascript .upnpDevices').append('<br><div>Upnp Devices:</div><br><div>'+JSON.stringify(data5)+'</div>');return data5;},function(data5){ console.log('Upnp Devices'); console.log(data5);jQuery('#javascript .upnpDevices').append('<br><div>Upnp Devices:</div><br><div>'+JSON.stringify(data5)+'</div>');return data5;}).then(function(data5){console.log(data5);});
+			//function to get the UPnP services of the second device
+			mediascape.discovery.getServices("upnp",2).then(function(data26){ console.log('Upnp Services'); console.log(data26);jQuery('#javascript .upnpServices').append('<br><div>Upnp Services:</div><br><div>'+JSON.stringify(data26)+'</div>');return data26;},function(data26){ console.log('Upnp Services'); console.log(data26);jQuery('#javascript .upnpServices').append('<br><div>Upnp Services:</div><br><div>'+JSON.stringify(data26)+'</div>');return data26;}).then(function(data26){console.log(data26);});
+			//function to get the action of the RenderingControl UPnP service of the second device
+			mediascape.discovery.getActions("upnp",2, "RenderingControl").then(function(data27){ console.log('Upnp Actions'); console.log(data27);jQuery('#javascript .upnpDevices').append('<br><div>Upnp Actions:</div><br><div>'+JSON.stringify(data27)+'</div>');return data27;},function(data27){ console.log('Upnp Actions'); console.log(data27);jQuery('#javascript .upnpDevices').append('<br><div>Upnp Actions:</div><br><div>'+JSON.stringify(data27)+'</div>');return data27;}).then(function(data27){console.log(data27);});
+			//function to get the parameters for the action of the RenderingControl UPnP service of the second device
+			mediascape.discovery.getParameters("upnp",2, "RenderingControl","SetVolume").then(function(data28){ console.log('Upnp Parameters'); console.log(data28);jQuery('#javascript .upnpParameters').append('<br><div>Upnp Parameters:</div><br><div>'+JSON.stringify(data28)+'</div>');return data28;},function(data28){ console.log('Upnp Parameters'); console.log(data28);jQuery('#javascript .upnpParameters').append('<br><div>Upnp Parameters:</div><br><div>'+JSON.stringify(data28)+'</div>');return data28;}).then(function(data28){console.log(data28);});
+			//function to get namedwebsockets agent presence
+			mediascape.discovery.isPresent("namedwebsockets").then(function(data30){console.log('namedwebsockets Presence');console.log(data30);jQuery('#javascript .namedwebsocketsPresence').append('<br><div>namedwebsockets Presence:</div><br><div>'+JSON.stringify(data30)+'</div>');
+				if(data30.presence==false){
+					//function to connect to the trial comunication channel of the namedwebsockets
+					mediascape.discovery.connectNWS("trial").then(function(e){
+						console.log(e);
+						//function to get the devices connected to the namedwebsockets
+						mediascape.discovery.getDevices("namedwebsockets").then(function(data31){ console.log('namedwebsockets Devices'); console.log(data31);jQuery('#javascript .namedwebsocketsDevices').append('<br><div>namedwebsockets Devices:</div><br><div>'+JSON.stringify(data31)+'</div>');return data31;},function(data31){ console.log('namedwebsockets Devices'); console.log(data31);jQuery('#javascript .namedwebsocketsDevices').append('<br><div>namedwebsockets Devices:</div><br><div>'+JSON.stringify(data31)+'</div>');return data31;}).then(function(data31){console.log(data31);});
+					});
+				}
+				return data30;},function(data30){console.log('namedwebsockets Presence');console.log(data30);jQuery('#javascript .namedwebsocketsPresence').append('<br><div>namedwebsockets Presence:</div><br><div>'+JSON.stringify(data30)+'</div>');return data30;}).then(function(data30){console.log(data30);});
+			
+			//Discovery devices capabilities
+			//===============================
+			//Presences
+			//**********
+			//function to get audio agent presence
+			mediascape.discovery.isPresent("audio").then(function(data6){console.log(data6); jQuery('#javascript .audioPresence').append('<br><div>Audio Presence:</div><br><div>'+data6.presence+'</div>');return data6;},function(data6){console.log(data6); jQuery('#javascript .audioPresence').append('<br><div>Audio Presence:</div><br><div>'+data6.presence+'</div>');return data6;}).then(function(data6){console.log(data6);});
+			//function to get language agent presence
+			mediascape.discovery.isPresent("language").then(function(data7){console.log(data7);jQuery('#javascript .languagePresence').append('<br><div>Language Presence:</div><br><div>'+data7.presence+'</div>'); return data7;},function(data7){console.log(data7);jQuery('#javascript .languagePresence').append('<br><div>Language Presence:</div><br><div>'+data7.presence+'</div>'); return data7;}).then(function(data7){console.log(data7);});
+			//function to get screenSize agent presence
+			mediascape.discovery.isPresent("screenSize").then(function(data8){console.log(data8);jQuery('#javascript .screenSizePresence').append('<br><div>Screen Presence:</div><br><div>'+data8.presence+'</div>'); return data8;},function(data8){console.log(data8);jQuery('#javascript .screenSizePresence').append('<br><div>Screen Presence:</div><br><div>'+data8.presence+'</div>'); return data8;}).then(function(data8){console.log(data8);});
+			//function to get orientation agent presence
+			mediascape.discovery.isPresent("orientation").then(function(data9){console.log(data9);jQuery('#javascript .orientationPresence').append('<br><div>Orientation Presence:</div><br><div>'+data9.presence+'</div>'); return data9;},function(data9){console.log(data9);jQuery('#javascript .orientationPresence').append('<br><div>Orientation Presence:</div><br><div>'+data9.presence+'</div>'); return data9;}).then(function(data9){console.log(data9);});
+			//function to get vibration agent presence
+			mediascape.discovery.isPresent("vibration").then(function(data10){console.log(data10);jQuery('#javascript .vibrationPresence').append('<br><div>Vibration Presence:</div><br><div>'+data10.presence+'</div>'); return data10;},function(data10){console.log(data10);jQuery('#javascript .vibrationPresence').append('<br><div>Vibration Presence:</div><br><div>'+data10.presence+'</div>'); return data10;}).then(function(data10){console.log(data10);});
+			//function to get battery agent presence
+			mediascape.discovery.isPresent("battery").then(function(data11){console.log(data11);jQuery('#javascript .batteryPresence').append('<br><div>Battery Presence:</div><br><div>'+data11.presence+'</div>'); return data11;},function(data11){console.log(data11);jQuery('#javascript .batteryPresence').append('<br><div>Battery Presence:</div><br><div>'+data11.presence+'</div>'); return data11;}).then(function(data11){console.log(data11);});
+			//function to get camera agent presence
+			mediascape.discovery.isPresent("camera").then(function(data12){console.log(data12);jQuery('#javascript .cameraPresence').append('<br><div>Camera Presence:</div><br><div>'+data12.presence+'</div>'); return data12;},function(data12){console.log(data12);jQuery('#javascript .cameraPresence').append('<br><div>Camera Presence:</div><br><div>'+data12.presence+'</div>'); return data12;}).then(function(data12){console.log(data12);});
+			//function to get userProximity agent presence
+			mediascape.discovery.isPresent("userProximity").then(function(data13){console.log(data13);jQuery('#javascript .userProximityPresence').append('<br><div>UserProximity Presence:</div><br><div>'+data13.presence+'</div>'); return data13;},function(data13){console.log(data13);jQuery('#javascript .userProximityPresence').append('<br><div>UserProximity Presence:</div><br><div>'+data13.presence+'</div>'); return data13;}).then(function(data13){console.log(data13);});
+			//function to get deviceProximity agent presence
+			mediascape.discovery.isPresent("deviceProximity").then(function(data14){console.log(data14);jQuery('#javascript .userProximityPresence').append('<br><div>DeviceProximity Presence:</div><br><div>'+data14.presence+'</div>'); return data14;},function(data14){console.log(data14);jQuery('#javascript .userProximityPresence').append('<br><div>DeviceProximity Presence:</div><br><div>'+data14.presence+'</div>'); return data14;}).then(function(data14){console.log(data14);});
+			//function to get touchscreen agent presence
+			mediascape.discovery.isPresent("touchscreen").then(function(data15){console.log(data15); jQuery('#javascript .touchscreenPresence').append('<br><div>Touchscreen Presence:</div><br><div>'+data15.presence+'</div>');return data15;},function(data15){console.log(data15); jQuery('#javascript .touchscreenPresence').append('<br><div>Touchscreen Presence:</div><br><div>'+data15.presence+'</div>');return data15;}).then(function(data15){console.log(data15);});
+			//function to get geolocation agent presence
+			mediascape.discovery.isPresent("geolocation").then(function(data16){console.log(data16); jQuery('#javascript .geolocationPresence').append('<br><div>Geolocation Presence:</div><br><div>'+data16.presence+'</div>');return data16;},function(data16){console.log(data16); jQuery('#javascript .geolocationPresence').append('<br><div>Geolocation Presence:</div><br><div>'+data16.presence+'</div>');return data16;}).then(function(data16){console.log(data16);});
+			//function to get connection agent presence
+			mediascape.discovery.isPresent("connection").then(function(data34){console.log(data34); jQuery('#javascript .connectionPresence').append('<br><div>Connection Presence:</div><br><div>'+data34.presence+'</div>');return data34;},function(data34){console.log(data34); jQuery('#javascript .connectionPresence').append('<br><div>Connection Presence:</div><br><div>'+data34.presence+'</div>');return data34;}).then(function(data34){console.log(data34);});
+			//function to get deviceType agent presence
+			mediascape.discovery.isPresent("deviceType").then(function(data36){console.log(data36); jQuery('#javascript .deviceTypePresence').append('<br><div>DeviceType Presence:</div><br><div>'+data36.presence+'</div>');return data36;},function(data36){console.log(data36); jQuery('#javascript .deviceTypePresence').append('<br><div>DeviceType Presence:</div><br><div>'+data36.presence+'</div>');return data36;}).then(function(data36){console.log(data36);});
+
+			//Extra Information
+			//******************
+			//function to get extra information of the language
+			mediascape.discovery.getExtra("language").then(function(data17){console.log(JSON.stringify(data17));jQuery('#javascript .languageExtra').append('<br><div>Language Extra:</div><br><div>'+JSON.stringify(data17)+'</div>'); return data17;},function(data17){console.log(JSON.stringify(data17));jQuery('#javascript .languageExtra').append('<br><div>Language Extra:</div><br><div>'+JSON.stringify(data17)+'</div>'); return data17;}).then(function(data17){console.log(JSON.stringify(data17));});
+			//function to get extra information of the screen size.
+			mediascape.discovery.getExtra("screenSize").then(function(data18){console.log(JSON.stringify(data18));jQuery('#javascript .screenSizeExtra').append('<br><div>Screen Extra:</div><br><div>'+JSON.stringify(data18)+'</div>'); return data18;},function(data18){console.log(JSON.stringify(data18));jQuery('#javascript .screenSizeExtra').append('<br><div>Screen Extra:</div><br><div>'+JSON.stringify(data18)+'</div>'); return data18;}).then(function(data18){console.log(JSON.stringify(data18));});
+			//function to get extra information of the device orientation.
+			mediascape.discovery.getExtra("orientation").then(function(data19){console.log(JSON.stringify(data19));jQuery('#javascript .orientationExtra').append('<br><div>Orientation Extra:</div><br><div>'+JSON.stringify(data19)+'</div>'); return data19;},function(data19){console.log(JSON.stringify(data19));jQuery('#javascript .orientationExtra').append('<br><div>Orientation Extra:</div><br><div>'+JSON.stringify(data19)+'</div>'); return data19;}).then(function(data19){console.log(JSON.stringify(data19));});
+			//function to get extra information of the remaining battery
+			mediascape.discovery.getExtra("battery").then(function(data20){console.log(JSON.stringify(data20)); return data20;}).then(function(data20){jQuery('#javascript .batteryExtra').append('<br><div>Battery Extra:</div><br><div>'+JSON.stringify(data20)+'</div>'); return data20;},function(data20){console.log(JSON.stringify(data20)); return data20;}).then(function(data20){jQuery('#javascript .batteryExtra').append('<br><div>Battery Extra:</div><br><div>'+JSON.stringify(data20)+'</div>'); return data20;}).then(function(data20){console.log(JSON.stringify(data20));});
+			//function to get extra information of the cameras
+			mediascape.discovery.getExtra("camera").then(function(data21){console.log(JSON.stringify(data21));jQuery('#javascript .cameraExtra').append('<br><div>Camera Extra:</div><br><div>'+JSON.stringify(data21)+'</div>'); return data21;},function(data21){console.log(JSON.stringify(data21));jQuery('#javascript .cameraExtra').append('<br><div>Camera Extra:</div><br><div>'+JSON.stringify(data21)+'</div>'); return data21;}).then(function(data21){console.log(JSON.stringify(data21));});
+			//function to get extra information of the userProximity
+			mediascape.discovery.getExtra("userProximity").then(function(data22){console.log(JSON.stringify(data22));jQuery('#javascript .userProximityExtra').append('<br><div>UserProximity Extra:</div><br><div>'+JSON.stringify(data22)+'</div>'); return data22;},function(data22){console.log(JSON.stringify(data22));jQuery('#javascript .userProximityExtra').append('<br><div>UserProximity Extra:</div><br><div>'+JSON.stringify(data22)+'</div>'); return data22;}).then(function(data22){console.log(JSON.stringify(data22));});
+			//function to get extra information of the deviceProximity
+			mediascape.discovery.getExtra("deviceProximity").then(function(data23){console.log(JSON.stringify(data23));jQuery('#javascript .deviceProximityExtra').append('<br><div>DeviceProximity Extra:</div><br><div>'+JSON.stringify(data23)+'</div>'); return data23;},function(data23){console.log(JSON.stringify(data23));jQuery('#javascript .deviceProximityExtra').append('<br><div>DeviceProximity Extra:</div><br><div>'+JSON.stringify(data23)+'</div>'); return data23;}).then(function(data23){console.log(JSON.stringify(data23));});
+			//function to get extra information of the geolocation
+			mediascape.discovery.getExtra("geolocation").then(function(data24){console.log(JSON.stringify(data24)); jQuery('#javascript .geolocationExtra').append('<br><div>Geolocation Extra:</div><br><div>'+JSON.stringify(data24)+'</div>');return data24;},function(data24){console.log(JSON.stringify(data24)); jQuery('#javascript .geolocationExtra').append('<br><div>Geolocation Extra:</div><br><div>'+JSON.stringify(data24)+'</div>');return data24;}).then(function(data24){console.log(JSON.stringify(data24));});
+			//function to get extra information of the audio elements
+			mediascape.discovery.getExtra("audio").then(function(data25){console.log(JSON.stringify(data25)); jQuery('#javascript .audioExtra').append('<br><div>Audio Extra:</div><br><div>'+JSON.stringify(data25)+'</div>');return data25;},function(data25){console.log(JSON.stringify(data25)); jQuery('#javascript .audioExtra').append('<br><div>Audio Extra:</div><br><div>'+JSON.stringify(data25)+'</div>');return data25;}).then(function(data25){console.log(JSON.stringify(data25));});
+			//function to get extra information of the connection type
+			mediascape.discovery.getExtra("connection").then(function(data35){console.log(JSON.stringify(data35)); jQuery('#javascript .connectionExtra').append('<br><div>Connection Extra:</div><br><div>'+JSON.stringify(data35)+'</div>');return data35;},function(data35){console.log(JSON.stringify(data35)); jQuery('#javascript .connectionExtra').append('<br><div>Connection Extra:</div><br><div>'+JSON.stringify(data35)+'</div>');return data35;}).then(function(data35){console.log(JSON.stringify(data35));});
+			//function to get extra information of the deviceType
+			mediascape.discovery.getExtra("deviceType").then(function(data37){console.log(JSON.stringify(data37)); jQuery('#javascript .deviceTypeExtra').append('<br><div>DeviceType Extra:</div><br><div>'+JSON.stringify(data37)+'</div>');return data37;},function(data37){console.log(JSON.stringify(data37)); jQuery('#javascript .deviceTypeExtra').append('<br><div>DeviceType Extra:</div><br><div>'+JSON.stringify(data37)+'</div>');return data37;}).then(function(data37){console.log(JSON.stringify(data37));});
+			//Example of using wrong parameters
+			mediascape.discovery.isPresent("afsfasf").then(function(data40){console.log(data40); jQuery('#javascript .wrongPresence').append('<br><div>Wrong Presence:</div><br><div>'+data40.presence+'</div>');return data40;},function(data40){console.log(data40); jQuery('#javascript .wrongPresence').append('<br><div>Wrong Presence:</div><br><div>'+data40.presence+'</div>');return data40;}).then(function(data40){console.log(data40);});
+			mediascape.discovery.getExtra("lanasfasdfguage").then(function(data41){console.log(JSON.stringify(data41));jQuery('#javascript .wrongExtra').append('<br><div>Wrong Extra:</div><br><div>'+JSON.stringify(data41)+'</div>'); return data41;},function(data41){console.log(JSON.stringify(data41));jQuery('#javascript .wrongExtra').append('<br><div>Wrong Extra:</div><br><div>'+JSON.stringify(data41)+'</div>'); return data41;}).then(function(data41){console.log(JSON.stringify(data41));});
+		},false);
+	</script>
+</head>
+<body>
+	<h1>Discovery Requests:</h1>
+	<br>
+	<div id="javascript">
+		<div class="capabilitiesPresence"></div>
+		<div class='capabilitiesExtra'></div>
+
+		<div class='upnpPresence'></div>
+		<div class='upnpDevices'></div>
+		<div class='upnpServices'></div>
+		<div class='upnpActions'></div>
+		<div class='upnpParameters'></div>
+
+		<div class='namedwebsocketsPresence'></div>
+		<div class='namedwebsocketsDevices'></div>
+
+		<div class='bluetoothPresence'></div>
+		<div class='bluetoothDevices'></div>
+
+		<div class='screenSizePresence'></div>
+		<div class='screenSizeExtra'></div>
+
+		<div class='geolocationPresence'></div>
+		<div class='geolocationExtra'></div>
+
+		<div class='orientationPresence'></div>
+		<div class='orientationExtra'></div>
+
+		<div class='mediaPresence'></div>
+		<div class='mediaExtra'></div>
+
+		<div class='vibrationPresence'></div>
+		<div class='vibrationExtra'></div>
+
+		<div class='languagePresence'></div>
+		<div class='languageExtra'></div>
+
+		<div class='cameraPresence'></div>
+		<div class='cameraExtra'></div>
+
+		<div class='audioPresence'></div>
+		<div class='audioExtra'></div>
+
+		<div class='featuresPresence'></div>
+		<div class='featuresExtra'></div>
+
+		<div class='batteryPresence'></div>
+		<div class='batteryExtra'></div>
+
+		<div class='userProximityPresence'></div>
+		<div class='userProximityExtra'></div>
+
+		<div class='deviceProximityPresence'></div>
+		<div class='deviceProximityExtra'></div>
+
+		<div class='touchscreenPresence'></div>
+		<div class='touchscreenExtra'></div>
+
+		<div class='connectionPresence'></div>
+		<div class='connectionExtra'></div>
+		
+		<div class='deviceTypePresence'></div>
+		<div class='deviceTypeExtra'></div>
+
+		<div class='wrongPresence'></div>
+		<div class='wrongExtra'></div>
+	</div>
+	<h1>Association Requests:</h1>
+	<br>
+	<div id="javascript">
+		<div class='association12'></div>
+		<div class='association3'></div>
+	</div>
+</body>
+</html>
