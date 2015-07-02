@@ -1,0 +1,551 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+	<title>NamedWebSocket Test Console</title>
+
+	<script>
+		/***
+		 * NetworkWebSocket + LocalWebSocket shim library
+		 * ----------------------------------------------------------------
+		 *
+		 * API Usage:
+		 * ----------
+		 *
+		 *     // Connect with other peers using the same service name in the current network
+		 *     var ws = new NetworkWebSocket("myServiceName");
+		 *
+		 * or:
+		 *
+		 *     // Connect with other peers using the same service name on the local device
+		 *     var ws = new LocalWebSocket("myServiceName");
+		 *
+		 * ...then use the returned `ws` object just like a normal JavaScript WebSocket object.
+		 *
+		**/
+		(function(global) {
+
+			// *Always* connect to our own localhost-based proxy
+			var endpointUrlBase = "ws://localhost:{{$}}/";
+
+			function isValidServiceName(serviceName) {
+				return /^[A-Za-z0-9\._-]{1,255}$/.test(serviceName);
+			}
+
+			function isJson(json) {
+			    try {
+			        JSON.parse(json);
+			    } catch (e) {
+			        return false;
+			    }
+			    return true;
+			}
+
+			function createServicePath(isNetwork, serviceName) {
+				var path = "";
+				if (isNetwork) {
+					path += "network/";
+				} else {
+					path += "local/";
+				}
+				path += serviceName;
+				return path + "/";
+			}
+
+		/**** START WEBSOCKET SHIM ****/
+
+			var P2PWebSocket = function(peerId, controlWebSocket) {
+				this.id     = peerId;
+				this.socket = controlWebSocket;
+
+				// Setup dynamic WebSocket interface attributes
+				this.url            = "#"; // no url (...that's kind of the whole point :)
+				this.readyState     = P2PWebSocket.prototype.CONNECTING; // initial state
+				this.bufferedAmount = 0;
+				this.extensions     = this.socket.extensions; // inherit
+				this.protocol       = this.socket.protocol;   // inherit
+				this.binaryType     = "blob"; // as per WebSockets spec
+
+				this.__events = {};
+			};
+
+			P2PWebSocket.prototype.send = function(data) {
+				if (this.readyState != P2PWebSocket.prototype.OPEN) {
+					throw "message cannot be sent because the web socket is not open";
+				}
+
+				var message = {
+					"Action":  "message",
+					"Target":  this.id,
+					"Payload": data
+				};
+				this.socket.send(JSON.stringify(message));
+			};
+
+			P2PWebSocket.prototype.close = function(code, reason) {
+				if (this.readyState != P2PWebSocket.prototype.OPEN) {
+					throw "web socket cannot be closed because it is not open";
+				}
+
+				this.__doClose(code || 3001, reason || "Closed by local peer", this.socket);
+			};
+
+			P2PWebSocket.prototype.addEventListener = function(type, listener, useCapture) {
+				if (!(type in this.__events)) {
+					this.__events[type] = [];
+				}
+				this.__events[type].push(listener);
+			};
+
+			P2PWebSocket.prototype.removeEventListener = function(type, listener, useCapture) {
+				if (!(type in this.__events)) return;
+				var events = this.__events[type];
+				for (var i = events.length - 1; i >= 0; --i) {
+					if (events[i] === listener) {
+						events.splice(i, 1);
+						break;
+					}
+				}
+			};
+
+			P2PWebSocket.prototype.dispatchEvent = function(event) {
+				var events = this.__events[event.type] || [];
+				for (var i = 0; i < events.length; ++i) {
+					events[i].call(this, event);
+				}
+				var handler = this["on" + event.type];
+				if (handler) handler.call(this, event);
+			};
+
+			P2PWebSocket.prototype.__handleEvent = function(flashEvent) {
+
+				// Delay until next run loop (like real events)
+				window.setTimeout(function() {
+
+					if ("readyState" in flashEvent) {
+						this.readyState = flashEvent.readyState;
+					}
+
+					var jsEvent;
+					if (flashEvent.type == "open" || flashEvent.type == "closing" || flashEvent.type == "error") {
+						jsEvent = this.__createSimpleEvent(flashEvent.type);
+					} else if (flashEvent.type == "close") {
+						jsEvent = this.__createSimpleEvent("close");
+						jsEvent.code = flashEvent.code;
+						jsEvent.reason = flashEvent.reason;
+					} else if (flashEvent.type == "message") {
+						jsEvent = this.__createMessageEvent(flashEvent.senderId, flashEvent.message);
+					} else {
+						throw "unknown event type: " + flashEvent.type;
+					}
+
+					this.dispatchEvent(jsEvent);
+
+					// Fire callback (if any provided)
+					if (flashEvent.callback) flashEvent.callback.call(this);
+
+				}.bind(this), 1);
+			};
+
+			P2PWebSocket.prototype.__createSimpleEvent = function(type) {
+				if (document.createEvent && window.Event) {
+					var event = document.createEvent("Event");
+					event.initEvent(type, false, false);
+					return event;
+				} else {
+					return {type: type, bubbles: false, cancelable: false};
+				}
+			};
+
+			P2PWebSocket.prototype.__createMessageEvent = function(senderId, data) {
+				if (window.MessageEvent && typeof(MessageEvent) == "function") {
+					return new MessageEvent("message", {
+						"view": window,
+						"bubbles": false,
+						"cancelable": false,
+						"senderId": senderId,
+						"data": data
+					});
+				} else if (document.createEvent && window.MessageEvent) {
+					var event = document.createEvent("MessageEvent");
+					event.initMessageEvent("message", false, false, data, null, null, window, null);
+					return event;
+				} else {
+					return {type: "message", data: data, bubbles: false, cancelable: false};
+				}
+			};
+
+			P2PWebSocket.prototype.__doClose = function(code, reason, rootWebSocket) {
+				// Fire 'open' event at new websocket shim object
+				this.__handleEvent({
+					type: "closing",
+					readyState: P2PWebSocket.prototype.CLOSING,
+					callback: function() {
+						// Fire 'open' event at new websocket shim object
+						this.__handleEvent({
+							type: "close",
+							readyState: P2PWebSocket.prototype.CLOSED,
+							code: code,
+							reason: reason,
+							callback: function() {
+								// Fire 'disconnect' event at root websocket object
+								var disconnectEvt = new CustomEvent('disconnect', {
+									"bubbles": false,
+									"cancelable": false,
+									"detail": {
+											"target": this
+									}
+								});
+								rootWebSocket.dispatchEvent(disconnectEvt);
+
+								if (rootWebSocket["ondisconnect"])
+									rootWebSocket["ondisconnect"].call(this, disconnectEvt);
+							}
+						});
+					}
+				});
+			}
+
+			/**
+			* Define the WebSocket readyState enumeration.
+			*/
+			P2PWebSocket.prototype.CONNECTING = 0;
+			P2PWebSocket.prototype.OPEN = 1;
+			P2PWebSocket.prototype.CLOSING = 2;
+			P2PWebSocket.prototype.CLOSED = 3;
+
+		/**** END WEBSOCKET SHIM ****/
+
+
+			var NamedWebSocket = function (serviceName, subprotocols, isNetwork) {
+				if (!isValidServiceName(serviceName)) {
+					throw "Invalid Service Name: " + serviceName;
+				}
+
+				var peerId = Math.floor( Math.random() * 1e16);
+
+				var path = createServicePath(isNetwork, serviceName)
+
+				var rootWebSocket = new WebSocket(endpointUrlBase + path + peerId, subprotocols);
+
+				// New custom attributes on NamedWebSocket objects
+				rootWebSocket.id    = peerId
+				rootWebSocket.peers = [];
+
+				var controlWebSocket = new WebSocket(endpointUrlBase + "control/" + path + peerId);
+
+				var p2pWebSockets = {};
+
+				// Process control websocket messages
+				controlWebSocket.onmessage = function(evt) {
+					var data = JSON.parse(evt.data);
+
+					switch (data.Action) {
+						case "connect":
+							// Create a new WebSocket shim object
+							var ws = new P2PWebSocket(data.Target, controlWebSocket);
+							p2pWebSockets[data.Target] = ws;
+
+							// Add to root web sockets p2p sockets enumeration
+							rootWebSocket.peers.push(ws);
+
+							// Fire 'connect' event at root websocket object
+							// **then** fire p2p websocket 'open' event (see above)
+							var connectEvt = new CustomEvent('connect', {
+								"bubbles": false,
+								"cancelable": false,
+								"detail": {
+										"target": ws
+								}
+							});
+							rootWebSocket.dispatchEvent(connectEvt);
+
+							if (rootWebSocket["onconnect"])
+								rootWebSocket["onconnect"].call(this, connectEvt);
+
+							window.setTimeout(function() {
+								// Fire 'open' event at new websocket shim object
+								ws.__handleEvent({
+									type: "open",
+									readyState: P2PWebSocket.prototype.OPEN
+								});
+							}, 200);
+
+							break;
+						case "disconnect":
+							var ws = p2pWebSockets[data.Target];
+							if (ws) {
+
+								// Remove from root web sockets p2p sockets enumeration
+								for (var i = 0; i < rootWebSocket.peers.length; i++) {
+									if (rootWebSocket.peers[i].id == data.Target) {
+										rootWebSocket.peers.splice(i, 1);
+									}
+								}
+
+								// Create and fire events:
+								//   - 'close' on p2p websocket object
+								//   - 'disconnect' on root websocket object
+								ws.__doClose(3000, "Closed by remote peer", rootWebSocket);
+								delete p2pWebSockets[data.Target];
+							}
+
+							break;
+						case "message":
+							// Use Source address to match up to target
+							var ws = p2pWebSockets[data.Source];
+							if (ws) {
+								// Re-encode data payload as string
+								var payload = data.Payload;
+								if (Object.prototype.toString.call(payload) != '[object String]') {
+									payload = JSON.stringify(payload);
+								}
+
+								// TODO: Check shim websocket readyState and queue or fire immediately
+								ws.__handleEvent({
+									type: "message",
+									message: payload,
+									senderId: data.Source
+								});
+							}
+
+							break;
+					}
+				}
+
+				return rootWebSocket;
+			};
+
+			var NetworkWebSocket = function (serviceName, subprotocols) {
+				return new NamedWebSocket(serviceName, subprotocols, true);
+			};
+
+			var LocalWebSocket = function (serviceName, subprotocols) {
+				return new NamedWebSocket(serviceName, subprotocols, false);
+			};
+
+			// Expose global functions
+
+			if (!global.NetworkWebSocket) {
+				global.NetworkWebSocket = (global.module || {}).exports = NetworkWebSocket;
+			}
+
+			if (!global.LocalWebSocket) {
+				global.LocalWebSocket = (global.module || {}).exports = LocalWebSocket;
+			}
+
+		})(this);
+	</script>
+
+	<script>
+		function log(msg) {
+			document.getElementById('log').appendChild(document.createTextNode(new Date() + '   ' + msg + '\n'));
+		}
+		function status(msg) {
+			log(msg);
+			document.getElementById('status').textContent = msg;
+		}
+
+		function getCheckedRadioValue(groupName) {
+			var els = document.getElementsByName(groupName);
+
+			for (var i = 0; i < els.length; i++) {
+				if (els[i].checked) {
+					return els[i].value;
+				}
+			}
+			return '*'; // broadcast value
+		}
+	</script>
+	<script>
+		var namedsocket;
+		var friendlyStatus = ["CONNECTING", "OPEN", "CLOSING", "CLOSED"];
+
+		function connect() {
+			if (namedsocket && namedsocket.readyState <= 1) {
+				log('Already connected.');
+				return;
+			}
+			var serviceName = document.getElementById('name').value;
+			var isNetwork = document.getElementById('network').checked;
+			if (isNetwork) {
+				namedsocket = new NetworkWebSocket(serviceName);
+			} else {
+				namedsocket = new LocalWebSocket(serviceName);
+			}
+			status('Connecting to "' + serviceName + '"');
+			namedsocket.onopen = function (event) {
+				document.getElementById('readyState').textContent = friendlyStatus[ namedsocket.readyState ];
+				document.getElementById('peerCount').textContent = "0";
+
+				status('Connected to "' + serviceName + '" as peer [' + namedsocket.id + ']');
+
+				document.getElementById('name').setAttribute("disabled", "disabled");
+				document.getElementById('connectBtn').setAttribute("disabled", "disabled");
+				var radioButtons = document.getElementsByName("namedsockettype");
+				for(var i = 0; i < radioButtons.length; i++) {
+					radioButtons[i].setAttribute("disabled", "disabled");
+				}
+
+				document.getElementById('text').removeAttribute("disabled");
+				document.getElementById('messageBtn').removeAttribute("disabled");
+				document.getElementById('disconnectBtn').removeAttribute("disabled");
+				console.log(namedsocket.peers);
+			};
+			namedsocket.onmessage = function (event) {
+				log('RCVD: ' + event.data);
+			};
+			namedsocket.onclose = function (event) {
+				refreshPeerList();
+
+				document.getElementById('readyState').textContent = friendlyStatus[ namedsocket.readyState ];
+				document.getElementById('peerCount').textContent = '-';
+
+				status('Disconnected');
+
+				document.getElementById('name').removeAttribute("disabled");
+				document.getElementById('connectBtn').removeAttribute("disabled");
+				var radioButtons = document.getElementsByName("namedsockettype");
+				for(var i = 0; i < radioButtons.length; i++) {
+					radioButtons[i].removeAttribute("disabled");
+				}
+
+				document.getElementById('text').setAttribute("disabled", "disabled");
+				document.getElementById('messageBtn').setAttribute("disabled", "disabled");
+				document.getElementById('disconnectBtn').setAttribute("disabled", "disabled");
+			};
+			namedsocket.onconnect = function (event) {
+				var peerWebSocket = event.detail.target;
+
+				log('Peer [' + peerWebSocket.id + '] connected');
+
+				peerWebSocket.onmessage = function (event) {
+					log('PRIVATE RCVD FROM [' + peerWebSocket.id + ']: ' + event.data);
+				};
+
+				refreshPeerList();
+			}
+			namedsocket.ondisconnect = function (event) {
+				var peerWebSocket = event.detail.target;
+
+				log('Peer [' + peerWebSocket.id + '] disconnected');
+
+				refreshPeerList();
+			}
+		}
+		function disconnect() {
+			if (namedsocket && namedsocket.readyState <= 1) {
+				status('Disconnecting.');
+
+				namedsocket.peers = [];
+
+				namedsocket.close();
+			} else {
+				log('Not connected.');
+			}
+		}
+		function send() {
+			if (namedsocket) {
+				var message = document.getElementById('text').value;
+				var selectedTargetId = getCheckedRadioValue("messageTarget");
+
+				if (selectedTargetId == "*") {
+					namedsocket.send(message);
+					log('SENT: ' + message);
+				} else {
+					for (var i = 0; i < namedsocket.peers.length; i++) {
+						if (namedsocket.peers[i].id == selectedTargetId) {
+							namedsocket.peers[i].send(message);
+							log('PRIVATE SENT TO [' + namedsocket.peers[i].id + ']: ' + message);
+							break;
+						}
+					}
+				}
+			} else {
+				log('Not connected.');
+			}
+		}
+		function refreshPeerList() {
+			if (!namedsocket) {
+				return;
+			}
+
+			document.getElementById('peerCount').textContent = namedsocket.peers.length + "";
+
+			var peerListEl = document.getElementById('peerList');
+			peerListEl.textContent = "";
+
+			if (namedsocket.peers.length == 0) {
+				peerListEl.innerHTML = "<em>Not available. No peers connected</em>";
+			} else {
+				peerListEl.textContent = "Send direct to: ";
+				for (var i = 0; i < namedsocket.peers.length; i++) {
+						var peerInputEl = document.createElement('input');
+						peerInputEl.type  = "radio";
+						peerInputEl.value = namedsocket.peers[i].id;
+						peerInputEl.name  = "messageTarget";
+
+						var peerLabelEl         = document.createElement('label');
+						peerLabelEl.for         = namedsocket.peers[i].id + "";
+						peerLabelEl.textContent = " [" + namedsocket.peers[i].id + "] ";
+
+						peerListEl.appendChild(peerInputEl);
+						peerListEl.appendChild(peerLabelEl);
+				}
+			}
+		}
+	</script>
+
+	<style>
+		input[type="text"]:disabled,
+		textarea:disabled
+		{
+		background-color:#dddddd;
+		}
+	</style>
+</head>
+<body>
+		<h2>Named WebSockets Test Console</h2>
+
+		<p><strong>Connection Status:</strong> <span id="readyState">-</span> <span id="status">Idle</span></p>
+		<p>
+			<label for="name"><strong>Service Name:</strong></label>
+			<input id="name" type="text" size="80" value="adhocservice">
+			<input type=button id="connectBtn" value="Connect" onclick="connect()">
+			<input type=button id="disconnectBtn" value="Disconnect" disabled="disabled" onclick="disconnect()">
+		</p>
+		<p>
+			<strong>Named WebSocket Type:</strong>
+			<span style="margin: 0 20px;"></span>
+			<label for="local">Local Service</label>
+			<input type="radio" id="local" name="namedsockettype" value="LocalWebSocket" checked>
+			<span style="margin: 0 20px;"></span>
+			<label for="network">Network Service</label>
+			<input type="radio" id="network" name="namedsockettype" value="NetworkWebSocket">
+		</p>
+		<p>
+			<label><strong>Peer Count:</strong> <span id="peerCount">-</span>
+		</p>
+		<hr>
+		<p>
+			<label for="text"><strong>Message:</strong></label>
+			<br>
+			<textarea id="text" type="text" rows="4" cols="80" disabled="disabled"></textarea>
+			<br>
+		</p>
+		<p>
+			<input type="radio" name="messageTarget" value="*" checked>
+			<label for="targetAll"><em>Broadcast to all peers</em></label>
+		</p>
+		<p><strong>Peer Messaging</strong></p>
+		<p id="peerList">
+			<em>Not available. No peers connected</em>
+			<!-- Will be populated with available peers when they connect to the same service (with the same type) -->
+		</p>
+		<p>
+			<input type=button id="messageBtn" value="Send Message" disabled="disabled" onclick="send()">
+		</p>
+		<hr>
+		<pre id="log">Log:
+</pre>
+</body>
+</html>
