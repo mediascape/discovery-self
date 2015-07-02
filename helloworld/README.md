@@ -24,7 +24,7 @@ You will find a deployment file for each of the demos to could install in a linu
 
 For discovery-self deployment:
 ```
-    sh ./deploy-discovery-self.sh
+    sh ./deploy.sh
 ```
 
 The deployment will be done into the /var/www/html/ or /var/www/ folder.

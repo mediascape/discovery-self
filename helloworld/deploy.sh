@@ -1,7 +1,6 @@
 #!/bin/bash
 
 src=API/mediascape
-#discovery_lib=API/mediascape/lib
 mediascape_lib=API/lib
 helloworld=helloworld
 
@@ -38,14 +37,16 @@ fi
 if [ -d /var/www/html ];
 then
 	sudo cp $helloworld /var/www/html/discovery-self -r
+	sudo mkdir /var/www/html/discovery-self/js/lib
+	sudo mkdir /var/www/html/discovery-self/js/mediascape/lib
 	sudo cp $src/* /var/www/html/discovery-self/js/mediascape -r
 	sudo cp $mediascape_lib/* /var/www/html/discovery-self/js/mediascape/lib -r
-	#sudo cp $discovery_lib/* /var/www/html/discovery-self/js/mediascape/lib -r
 else
 	sudo cp $helloworld /var/www/discovery-self -r
+	sudo mkdir /var/www/discovery-self/js/lib
+	sudo mkdir /var/www/discovery-self/js/mediascape/lib
 	sudo cp $src/* /var/www/discovery-self/js/mediascape -r
 	sudo cp $mediascape_lib/* /var/www/discovery-self/js/mediascape/lib -r
-	#sudo cp $discovery_lib/* /var/www/discovery-self/js/mediascape/lib -r
 fi
 
 ##
@@ -54,12 +55,16 @@ fi
 #sudo npm install
 #sudo node index.js
 ##
-
-if [ -d /var/www/discovery-self ];
+if [ -d /var/www/html/discovery-self ];
 then
-	echo "${Yellow}discovery-self installed in /var/www/${Color_Off}"
+	echo "${Yellow}discovery-self installed in /var/www/html/${Color_Off}"
 	echo "${Yellow}Demo url: http://localhost/discovery-self${Color_Off}"
 else
-	echo "${Red}Error during the installation${Color_Off}"
+	if [ -d /var/www/discovery-self ];
+	then
+		echo "${Yellow}discovery-self installed in /var/www/${Color_Off}"
+		echo "${Yellow}Demo url: http://localhost/discovery-self${Color_Off}"
+	else
+		echo "${Red}Error during the installation${Color_Off}"
+	fi
 fi
-
