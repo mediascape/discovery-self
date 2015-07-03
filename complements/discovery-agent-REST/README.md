@@ -94,7 +94,7 @@ GET request
 
  * http://localhost:8182/discoveryagent/upnp/services?device=4
 
- {"services":[{"type":"AVTransport","serviceId":"urn:upnp-org:serviceId:AVTransport","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:AVTransport"},{"type":"RenderingControl","serviceId":"urn:upnp-org:serviceId:RenderingControl","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:RenderingControl"},{"type":"ConnectionManager","serviceId":"urn:upnp-org:serviceId:ConnectionManager","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:ConnectionManager"}]}
+ {"services":[{"type":"AVTransport","serviceId":"urn:upnp-org:serviceId:AVTransport","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:AVTransport"},{"type":"RenderingControl","serviceId":"urn:upnp-org:serviceId:RenderingControl","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:RenderingControl","URL":"/web/rcs_control"},{"type":"ConnectionManager","serviceId":"urn:upnp-org:serviceId:ConnectionManager","name":"(RemoteService) ServiceId: urn:upnp-org:serviceId:ConnectionManager","URL":"/web/cms_control"}]}
 
  * http://localhost:8182/discoveryagent/upnp/actions?device=4&service=RenderingControl
 
