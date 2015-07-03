@@ -92,7 +92,7 @@ public class UpnpServicesResource extends ServerResource {
 								if (service instanceof RemoteService){
 									RemoteService remoteService = (RemoteService) service;
 									Log.d("MyApp","URL:"+remoteService.getControlURI().toString());
-									jo.put("URL", remoteService.getControlURI().toString());
+									jo.put("URL", remoteService.getControlURI());
 								}
 								ja.put(jo);
 							}
