@@ -56,6 +56,7 @@ import org.restlet.resource.Delete;
 import org.restlet.resource.Options;
 import org.restlet.resource.ServerResource;
 import org.teleal.cling.model.meta.Device;
+import org.teleal.cling.model.meta.RemoteService;
 
 import com.example.discoveryagentrest.ServiceBoot;
 
@@ -88,6 +89,11 @@ public class UpnpServicesResource extends ServerResource {
 								jo.put("serviceId", service.getServiceId().toString());
 								jo.put("name", service.toString()); 
 								jo.put("type", service.getServiceType().getType()); 
+								if (service instanceof RemoteService){
+									RemoteService remoteService = (RemoteService) service;
+									Log.d("MyApp","URL:"+remoteService.getControlURI().toString());
+									jo.put("URL", remoteService.getControlURI().toString());
+								}
 								ja.put(jo);
 							}
 							JSONObject mainObj = new JSONObject();
