@@ -20,7 +20,6 @@
 
 	// *Always* connect to our own localhost-based proxy
 	var endpointUrlBase = "ws://localhost:2000/";
-	var sessionID;
 
 	function isValidServiceName(serviceName) {
 		return /^[A-Za-z0-9\._-]{1,255}$/.test(serviceName);
@@ -48,13 +47,10 @@
 
 /**** START WEBSOCKET SHIM ****/
 
-	var P2PWebSocket = function(peerId, controlWebSocket,sessionID) {
+	var P2PWebSocket = function(peerId, controlWebSocket) {
 		this.id     = peerId;
 		this.socket = controlWebSocket;
 
-		//Mediascape shareStateID
-		this.shareStateID = sessionID;
-		sessionID=sessionID;
 		// Setup dynamic WebSocket interface attributes
 		this.url            = "#"; // no url (...that's kind of the whole point :)
 		this.readyState     = P2PWebSocket.prototype.CONNECTING; // initial state
@@ -219,7 +215,7 @@
 			throw "Invalid Service Name: " + serviceName;
 		}
 
-		var peerId = Math.floor( Math.random() * 1e16);
+		var peerId = Math.floor( Math.random() * 1e8);
 
 		var path = createServicePath(isNetwork, serviceName)
 
@@ -240,33 +236,35 @@
 			switch (data.Action) {
 				case "connect":
 					// Create a new WebSocket shim object
-					console.log(sessionID);
-					var ws = new P2PWebSocket(data.Target, controlWebSocket, sessionID);
+					var ws = new P2PWebSocket(data.Target, controlWebSocket);
 					p2pWebSockets[data.Target] = ws;
 					// Add to root web sockets p2p sockets enumeration
-					rootWebSocket.peers.push(ws);
+					if(!exist(ws,rootWebSocket.peers)){
+						console.log(exist(ws,rootWebSocket.peers));
+						rootWebSocket.peers.push(ws);
 
-					// Fire 'connect' event at root websocket object
-					// **then** fire p2p websocket 'open' event (see above)
-					var connectEvt = new CustomEvent('connect', {
-						"bubbles": false,
-						"cancelable": false,
-						"detail": {
-								"target": ws
-						}
-					});
-					rootWebSocket.dispatchEvent(connectEvt);
-
-					if (rootWebSocket["onconnect"])
-						rootWebSocket["onconnect"].call(this, connectEvt);
-
-					window.setTimeout(function() {
-						// Fire 'open' event at new websocket shim object
-						ws.__handleEvent({
-							type: "open",
-							readyState: P2PWebSocket.prototype.OPEN
+						// Fire 'connect' event at root websocket object
+						// **then** fire p2p websocket 'open' event (see above)
+						var connectEvt = new CustomEvent('connect', {
+							"bubbles": false,
+							"cancelable": false,
+							"detail": {
+									"target": ws
+							}
 						});
-					}, 200);
+						rootWebSocket.dispatchEvent(connectEvt);
+
+						if (rootWebSocket["onconnect"])
+							rootWebSocket["onconnect"].call(this, connectEvt);
+
+						window.setTimeout(function() {
+							// Fire 'open' event at new websocket shim object
+							ws.__handleEvent({
+								type: "open",
+								readyState: P2PWebSocket.prototype.OPEN
+							});
+						}, 200);
+					}
 
 					break;
 				case "disconnect":
@@ -308,6 +306,13 @@
 
 					break;
 			}
+		}
+
+		function exist(ws,peers){
+			for (var i=0; i<peers.length; i++) {
+				if(peers[i].id===ws.id) return true;
+			}
+			return false;
 		}
 
 		return rootWebSocket;
