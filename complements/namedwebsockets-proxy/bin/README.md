@@ -17,6 +17,6 @@ To get started just download, binary and run the executable file that matches yo
 
 	./namedwebsockets-linux/namedwebsockets
 
-### Android 64 bits:(in a rooted device) ###
+### Android 64 bits (in a rooted device): ###
 
 	./namedwebsockets-android/namedwebsocketsArm
