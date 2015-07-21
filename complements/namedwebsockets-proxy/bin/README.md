@@ -18,5 +18,6 @@ To get started just download, binary and run the executable file that matches yo
 	./namedwebsockets-linux/namedwebsockets
 
 ### Android 64 bits (in a rooted device): ###
-
+	echo <device-name> > /proc/sys/kernel/hostname
 	./namedwebsockets-android/namedwebsocketsArm
+example: *echo samsungTAB1 > /proc/sys/kernel/hostname*
