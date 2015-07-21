@@ -24,7 +24,7 @@ https://github.com/davecheney/golang-crosscompile
 ## Instalation
 [Top][]
 
-### Installar hg:
+### Install hg (mercurial):
 
 
 	sudo apt-get install mercurial
