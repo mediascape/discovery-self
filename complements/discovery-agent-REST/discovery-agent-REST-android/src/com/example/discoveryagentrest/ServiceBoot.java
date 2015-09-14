@@ -689,9 +689,9 @@ import android.widget.Toast;
 	                    if (now - lastShake >= interval) { 
 	                        // trigger shake event
 	                    	Log.d("MyApp", "Shake!!!!!!");
-	                    	String url = "http://10.0.20.10:3000/Catcher/";
+	                    	String url1 = url;
 	                    	Intent i = new Intent(Intent.ACTION_VIEW);
-	                    	Uri u = Uri.parse(url);
+	                    	Uri u = Uri.parse(url1);
 	                    	i.setData(u);
 	                    	i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	                    	this.startActivity(i);
