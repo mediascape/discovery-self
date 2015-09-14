@@ -43,6 +43,14 @@
 */
 package com.example.discoveryagentrest;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Vector;
 
 import org.restlet.Component;
@@ -122,6 +130,11 @@ import android.widget.Toast;
 	public static float ax,ay,az;
 	public static Sensor orientationSensor = null;
 	public static int orientation = 0;
+	
+	//url to load on shake&Go.
+	String url = "";
+	//process to execute namedwebsockets. 
+	Process process;
 	
 	//Function to get battery information
 	private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
@@ -310,6 +323,100 @@ import android.widget.Toast;
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		String path = this.getFilesDir().getAbsolutePath();
+		
+		//execute namewebsocket from REST application.
+		try {
+			InputStream ins = getAssets().open("namedwebsockets");
+			byte[] buffer = new byte[ins.available()];
+			ins.read(buffer);
+			ins.close();
+			
+			/*InputStream ins1 = getAssets().open("url.txt");
+			byte[] buffer1 = new byte[ins.available()];
+			ins.read(buffer1);
+			ins1.close();*/
+			
+			InputStream ins2 = getAssets().open("Mediascape.png");
+			byte[] buffer2 = new byte[ins2.available()];
+			ins2.read(buffer2);
+			ins2.close();
+			
+			FileOutputStream fos = this.openFileOutput("namedwebsockets", Context.MODE_PRIVATE);
+			fos.write(buffer);
+			fos.close();
+			
+			FileOutputStream fos2 = this.openFileOutput("Mediascape.png", Context.MODE_PRIVATE);
+			fos2.write(buffer2);
+			fos2.close();
+			
+			File file = getFileStreamPath("namedwebsockets");
+			file.setExecutable(true);
+			context=this;
+			if(file.exists()){							
+			    	Log.d("MyApp", "Namedwebsockets file Exists.");
+					Log.d("MyApp",file.getAbsolutePath());
+					Thread thread = new Thread(){
+							public void run(){
+								    String path = context.getFilesDir().getAbsolutePath();
+							    	try {
+							    		process = Runtime.getRuntime().exec(new String[] {"su" ,"-c", " system/bin/ls -al "+path+" ; /system/bin/chmod 777 "+path+"/namedwebsockets ; echo TAB1 > /proc/sys/kernel/hostname ; /system/bin/ls -al "+path+" ; ."+path+"/namedwebsockets"});
+										
+										BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+									    StringBuilder log=new StringBuilder();
+									    String line;
+									    while ((line = bufferedReader.readLine()) != null) {
+									    	  Log.d("MyApp",line);
+									          log.append(line + "\n");
+									    }
+									    process.waitFor();
+							    	} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (InterruptedException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+							};
+					  };
+
+					  thread.start();
+			}
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+		//read file with the url
+		try {			
+			Log.d("MyApp", path);
+			File file2 = new File(path+"/url.txt");
+			if(!file2.exists()){
+		    	 	Log.d("MyApp", "File Does not Exist.");
+		    	 	final String string = new String("http://192.168.10.21:7000/Catchers/");  
+		    	 	FileOutputStream fos = this.openFileOutput("url.txt", Context.MODE_PRIVATE);
+		    	 	fos.write(string.getBytes());
+		    	 	fos.close();
+			}else{
+		    	 	Log.d("MyApp", "File Exists.");
+		    	 	FileInputStream fin = new FileInputStream(path+"/url.txt");
+		    	 	BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+	    	     		StringBuilder sb = new StringBuilder();
+	    			String line = null;
+	    	     		while ((line = reader.readLine()) != null) {
+	    	     			sb.append(line).append("\n");
+	    	     		}
+	    	     		reader.close();
+		    		url=sb.toString();
+		    		Log.d("MyApp", url);
+		    		fin.close();
+		     	}
+		} catch (FileNotFoundException e) {
+	        	Log.e("login activity", "File not found: " + e.toString());
+	    	} catch (IOException e) {
+	        	Log.e("login activity", "Can not read file: " + e.toString());
+	    	}
 		
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		
