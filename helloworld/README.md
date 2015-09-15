@@ -6,7 +6,7 @@ In this folder you will find the demostrations of discovery.
 [Goals][] | [Deployment][] | [Run][] | [API][] | [complements][]
 
 ### Goals
-
+[Top][]
 The aim of this web page is to show the way to consume the Discovery API developed in Mediascape project. You will you find in this example:
 
 - The way to consume the calls to the agents.
@@ -19,7 +19,7 @@ This is the code that can be found in the webpage: http://150.241.250.4:7443/WP3
 A prior condition is the deployment of a HTTP server (Apache).
 
 ### Deployment
-
+[Top][]
 You will find a deployment file for each of the demos to could install in a linux platform. It is very easy to install both demos. You just have to download the deployment files and execute like: 
 
 For discovery-self deployment:
@@ -30,7 +30,7 @@ For discovery-self deployment:
 The deployment will be done into the /var/www/html/ or /var/www/ folder.
 
 ### Run
-
+[Top][]
 After been deployed the users can access to the content in the URLs:
  
  For discovery-self run:
@@ -40,13 +40,13 @@ After been deployed the users can access to the content in the URLs:
 
 
 #### API
-
+[Top][]
 You will find the Discovery API code in:
 
 https://github.com/mediascape/discovery-self/tree/master/API/
         
 #### Complements
-
+[Top][]
 For a better use of this example, it is very important to open the web page in a device. This device must have installed Discovery Agent RESTFUL service and a namedwebsockets that you will find in:
 
 ##### Native REST Agent
