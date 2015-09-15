@@ -47,7 +47,7 @@ https://github.com/mediascape/discovery-self/tree/master/API/
         
 #### Complements
 
-For a better use of this example, it is very important to open the web page in a device. This device must have installed UPnPRESTFUL service and a namedwebsockets that you will find in:
+For a better use of this example, it is very important to open the web page in a device. This device must have installed Discovery Agent RESTFUL service and a namedwebsockets that you will find in:
 
 ##### Native REST Agent
 
