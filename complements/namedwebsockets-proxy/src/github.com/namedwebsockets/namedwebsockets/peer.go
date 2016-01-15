@@ -90,17 +90,21 @@ func (peer *PeerConnection) readConnectionPump(sock *NamedWebSocket) {
 		//create notifications with the url for linux and android
 		if(strings.Contains(string(message),"http://")&&!notiRecived){
 
-			peerNotifiedList.PushBack(string(message))
+			path, err2 := filepath.Abs("Mediascape.png")
+			if err2 != nil {
+				log.Fatal(err)
+			}
+			//log.Printf("Notification %s", path)
 
 			notify = notificator.New(notificator.Options{
-				DefaultIcon: "Mediascape.png",
+				DefaultIcon: path,
 				AppName:     "Mediascape",
 			})
 
 			if(string(runtime.GOOS)=="linux"&&string(runtime.GOARCH)!="arm"){
-				notify.Push("Mediascape", string(message), "./Mediascape.png")
+				notify.Push("Mediascape", string(message), path)
 			}else if(string(runtime.GOOS)=="linux"&&string(runtime.GOARCH)=="arm"){
-				completUrl := fmt.Sprintf("http://localhost:8182/discoveragent/notification?url=%s", string(message))
+				completUrl := fmt.Sprintf("http://localhost:8182/discoveryagent/notification?url=%s", string(message))
 				response, err := http.Get(completUrl)
 				if err != nil {
 					// handle error
