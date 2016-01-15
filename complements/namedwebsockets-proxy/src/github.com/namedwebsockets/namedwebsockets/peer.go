@@ -90,7 +90,7 @@ func (peer *PeerConnection) readConnectionPump(sock *NamedWebSocket) {
 		//create notifications with the url for linux and android
 		if(strings.Contains(string(message),"http://")&&!notiRecived){
 			
-			peerNotifiedList.PushBack(message.Payload)
+			peerNotifiedList.PushBack(string(message))
 
 			path, err2 := filepath.Abs("Mediascape.png")
 			if err2 != nil {
