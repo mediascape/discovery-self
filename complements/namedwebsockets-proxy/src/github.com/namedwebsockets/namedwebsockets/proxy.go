@@ -10,6 +10,7 @@ import (
 	"log"
 	"strings"
 	"github.com/notificator"
+	"path/filepath"
 
 	"net/http"
 	"container/list"
@@ -143,14 +144,19 @@ func (proxy *ProxyConnection) readConnectionPump(sock *NamedWebSocket) {
 			if(strings.Contains(message.Payload,"http://")&&!notiRecived){
 
 				proxyNotifiedList.PushBack(message.Payload)
+				
+				path, err2 := filepath.Abs("Mediascape.png")
+				if err2 != nil {
+					log.Fatal(err)
+				}
 
 				notify = notificator.New(notificator.Options{
-					DefaultIcon: "Mediascape.png",
+					DefaultIcon: path,
 					AppName:     "Mediascape",
 				})
 
 				if(string(runtime.GOOS)=="linux"&&string(runtime.GOARCH)!="arm"){
-					notify.Push("Mediascape", message.Payload, "Mediascape.png")
+					notify.Push("Mediascape", message.Payload, path)
 				}else if(string(runtime.GOOS)=="linux"&&string(runtime.GOARCH)=="arm"){
 					completUrl := fmt.Sprintf("http://localhost:8182/discoveragent/notification?url=%s", message.Payload)		
 					response, err := http.Get(completUrl)
