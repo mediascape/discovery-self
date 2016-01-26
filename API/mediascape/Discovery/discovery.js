@@ -1,6 +1,16 @@
 define( ["jquery","namedwebsockets"], function($,namedWebSockets) {
 	var networkWS=null;
 	var Discovery = function() {
+		
+				/**
+				 * connectNWS
+				 *
+				 * The connectNWS function creates a Named Web Socket connection.
+				 *
+				 * @param {string} serviceName - The serviceName that is going to be use to create the connection.
+				 *
+				 */
+				 
 				this.connectNWS = function(serviceName) {
 					var p1= new Promise(
 							function(resolve,reject){
@@ -49,11 +59,13 @@ define( ["jquery","namedwebsockets"], function($,namedWebSockets) {
 							});
 					return p1;
 				}
+				
 				/**
 				 * isPresent
 				 *
 				 * The isPresent function returns the presence of the technology passed as a parameter.
 				 *
+				 * @param {string} technology - The technology is going to ask for.
 				 * @return {Promise<JSON|Error>} The Promise wiht the device capabilities presence or error message.
 				 *
 				 */
@@ -515,6 +527,7 @@ define( ["jquery","namedwebsockets"], function($,namedWebSockets) {
 				 *
 				 * The getExtra function returns the capabilities of the device using Promise.
 				 *
+				 * @param {string} technology - The technology is going to use.
 				 * @return {Promise<JSON|Error>} The Promise wiht the device capabilities or error message.
 				 *
 				 */
@@ -1603,6 +1616,7 @@ define( ["jquery","namedwebsockets"], function($,namedWebSockets) {
 				 *
 				 * The getDevices function returns the list of devices using Promise.
 				 *
+				 * @param {string} technology - The technology is going to use.
 				 * @return {Promise<JSON|Error>} The Promise wiht the list of devices or error message.
 				 *
 				 */
@@ -1682,8 +1696,10 @@ define( ["jquery","namedwebsockets"], function($,namedWebSockets) {
 				/**
 				 * getServices
 				 *
-				 * The getDevices function returns the list of devices using Promise.
-				 *
+				 * The getServices function returns the list of services that a device provides using Promise.
+				 * 
+				 * @param {string} technology - The technology is going to use.
+				 * @param {integer} device - The number of the device list.
 				 * @return {Promise<JSON|Error>} The Promise wiht the list of devices or error message.
 				 *
 				 */
@@ -1751,7 +1767,10 @@ define( ["jquery","namedwebsockets"], function($,namedWebSockets) {
 				 * getActions
 				 *
 				 * The getActions function returns the list of actions using Promise.
-				 *
+				 * 
+				 * @param {string} technology - The technology is going to use.
+				 * @param {integer} device - The number of the device list.
+				 * @param {string} service - The serviceId of the service list.
 				 * @return {Promise<JSON|Error>} The Promise wiht the list of actions or error message.
 				 *
 				 */
@@ -1820,8 +1839,12 @@ define( ["jquery","namedwebsockets"], function($,namedWebSockets) {
 				/**
 				 * getParameters
 				 *
-				 * The getActions function returns the list of actions using Promise.
-				 *
+				 * The getParameters function returns the list of parameter necessary to exec an action using Promise.
+				 * 
+				 * @param {string} technology - The technology is going to use.
+				 * @param {integer} device - The number of the device list.
+				 * @param {string} service - The serviceId of the service list.
+				 * @param {string} action - The name of the action.
 				 * @return {Promise<JSON|Error>} The Promise wiht the list of actions or error message.
 				 *
 				 */
