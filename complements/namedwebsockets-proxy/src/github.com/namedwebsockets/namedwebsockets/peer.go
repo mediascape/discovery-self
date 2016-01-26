@@ -93,28 +93,31 @@ func (peer *PeerConnection) readConnectionPump(sock *NamedWebSocket) {
 			
 			peerNotifiedList.PushBack(string(message))
 			proxyNotifiedList.PushBack(string(message))
+			
+			if peer.id!=sock.controllers[0].id {
 
-			path, err2 := filepath.Abs("Mediascape.png")
-			if err2 != nil {
-				log.Fatal(err)
-			}
-			//log.Printf("Notification %s", path)
-
-			notify = notificator.New(notificator.Options{
-				DefaultIcon: path,
-				AppName:     "Mediascape",
-			})
-
-			if(string(runtime.GOOS)=="linux"&&string(runtime.GOARCH)!="arm"){
-				notify.Push("Mediascape", string(message), path)
-			}else if(string(runtime.GOOS)=="linux"&&string(runtime.GOARCH)=="arm"){
-				completUrl := fmt.Sprintf("http://localhost:8182/discoveryagent/notification?url=%s", string(message))
-				response, err := http.Get(completUrl)
-				if err != nil {
-					// handle error
-					log.Printf("Error: %s",err)
-				}else{
-					defer response.Body.Close()
+				path, err2 := filepath.Abs("Mediascape.png")
+				if err2 != nil {
+					log.Fatal(err)
+				}
+				//log.Printf("Notification %s", path)
+	
+				notify = notificator.New(notificator.Options{
+					DefaultIcon: path,
+					AppName:     "Mediascape",
+				})
+	
+				if(string(runtime.GOOS)=="linux"&&string(runtime.GOARCH)!="arm"){
+					notify.Push("Mediascape", string(message), path)
+				}else if(string(runtime.GOOS)=="linux"&&string(runtime.GOARCH)=="arm"){
+					completUrl := fmt.Sprintf("http://localhost:8182/discoveryagent/notification?url=%s", string(message))
+					response, err := http.Get(completUrl)
+					if err != nil {
+						// handle error
+						log.Printf("Error: %s",err)
+					}else{
+						defer response.Body.Close()
+					}
 				}
 			}
 		}
