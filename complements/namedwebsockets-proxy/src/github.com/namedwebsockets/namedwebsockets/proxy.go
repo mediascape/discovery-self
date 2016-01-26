@@ -144,6 +144,7 @@ func (proxy *ProxyConnection) readConnectionPump(sock *NamedWebSocket) {
 			if(strings.Contains(message.Payload,"http://")&&!notiRecived){
 
 				proxyNotifiedList.PushBack(message.Payload)
+				peerNotifiedList.PushBack(message.Payload)
 				
 				path, err2 := filepath.Abs("Mediascape.png")
 				if err2 != nil {
