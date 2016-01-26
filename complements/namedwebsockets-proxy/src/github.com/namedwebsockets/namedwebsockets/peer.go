@@ -8,6 +8,7 @@ import (
 	"log"
 	"strings"
 	"github.com/notificator"
+	"path/filepath"
 
 	"net/http"
 	"container/list"
@@ -91,6 +92,7 @@ func (peer *PeerConnection) readConnectionPump(sock *NamedWebSocket) {
 		if(strings.Contains(string(message),"http://")&&!notiRecived){
 			
 			peerNotifiedList.PushBack(string(message))
+			proxyNotifiedList.PushBack(string(message))
 
 			path, err2 := filepath.Abs("Mediascape.png")
 			if err2 != nil {
